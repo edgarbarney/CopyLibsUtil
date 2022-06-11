@@ -66,11 +66,18 @@ void ProcessPathString(std::string& tempDir, std::filesystem::path& fullPath, in
 
 int main(int argc, char* argv[])
 {
+	// std::filesystem::current_path(); Runs the "call" directory. We need the EXECUTABLE directory
+	// You can uncomment this line and comment the other to prevent this
+	// const std::filesystem::path currentDir = std::filesystem::current_path();
+	const std::filesystem::path currentDir = std::filesystem::weakly_canonical(std::filesystem::path(argv[0])).parent_path();
+	
+	std::cout << "\n\nFDreamer CopyLibsUtil - Started from : " << currentDir << "\n";
+
 	std::vector<std::string> filelist;
 
 	std::filesystem::path inputDir;
 	std::filesystem::path outputDir;
-	std::ifstream inputFile("copylibs_filelist.json");
+	std::ifstream inputFile(std::filesystem::path(currentDir)+="/copylibs_filelist.json");
 
 	try
 	{
@@ -84,14 +91,14 @@ int main(int argc, char* argv[])
 			std::string tempOutputDir = dirs["To"];
 
 			// Do we need these?
-			std::filesystem::path fullInPath = std::filesystem::current_path();
-			std::filesystem::path fullOutPath = std::filesystem::current_path();
+			std::filesystem::path fullInPath = currentDir;
+			std::filesystem::path fullOutPath = currentDir;
 			
 			ProcessPathString(tempInputDir, fullInPath, argc, argv);
 			ProcessPathString(tempOutputDir, fullOutPath, argc, argv);
 
-			inputDir = fullInPath;
-			outputDir = fullOutPath;
+			inputDir = fullInPath.make_preferred();
+			outputDir = fullOutPath.make_preferred();
 		}
 
 		if (mainBranch.is_array()) // "Data" header must be an array
@@ -129,16 +136,36 @@ int main(int argc, char* argv[])
 	catch (json::exception ex)
 	{
 		std::cout << "Json Exception! :\n" << ex.what() << std::endl;
+		return 100;
 	}
 	catch (const char* ex)
 	{
 		std::cout << "Parse Exception!: \n" << ex << std::endl;
+
+		return 200;
 	}
 
-	for (auto& tempstr : filelist)
+	try
 	{
-		std::filesystem::copy(std::filesystem::path(inputDir) += tempstr, outputDir);
+		for (auto& tempstr : filelist)
+		{
+			//std::filesystem::copy(std::filesystem::path(inputDir) += tempstr, outputDir);
+			auto tempInputPath = std::filesystem::path(inputDir);
+			tempInputPath += tempstr;
+			tempInputPath.make_preferred();
+			std::cout << "\nCopying file...\nFrom : " << tempInputPath;
+			std::cout << "To : " << outputDir;
+			std::filesystem::copy_file(tempInputPath, outputDir.string() + tempInputPath.filename().string(), std::filesystem::copy_options::overwrite_existing);
+		}
 	}
+	catch (std::filesystem::filesystem_error ex)
+	{
+		std::cout << "Filesystem Error!: \n" << ex.what() << std::endl;
+
+		return 300;
+	}
+
+	std::cout << "\n\nFDreamer CopyLibsUtil - Task finished.\n\n" << std::endl;
 
 	return 0;
 }
