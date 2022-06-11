@@ -1,0 +1,86 @@
+// The outter structure is kinda hardcoded.
+// Everything should be in an object called "Main".
+// Input and Output directories should be in an object called "Dirs"
+// and they should have a trailing slash (its platform independent)
+// Other data should be in a list of objects called "Data".
+{
+  "Main": {
+    "Dirs": {
+      "From": "?{+}/",
+	  // Absolute directories are unmodified by ?{x} 
+	  // This modifier should be at the very beginning of the directory
+	  // It moves x times up from the directory specified
+	  // For example on windows: the exe is run from "C:\dev\myproject\libs\"	  
+	  // ?{+} will make the input dir ""C:\dev\myproject\"
+	  // ?{++} will make the input dir ""C:\dev\"
+	  
+      "To": "?{+}/Build/?*3*_?*2*/"
+	  // Theres also argument modifiers
+	  // These will replace output dir names with args
+	  // For example, args are like these: CopyLibsUtil.exe Win32 x64 release
+	  // Build/?*3*_?*2*/ will become Build/release_x64/
+	  // Syntax is basically ?*[argindex]*
+    },
+    "Data": [
+      {
+        "type": "Win32", // First Arg
+        "data": [
+          {
+            "type": "x64", // Second Arg
+            "data": [
+              {
+                "type": "release", // Third Arg
+                "data": [
+				  "Engine/Libraries/SFML/Win64/bin/openal32.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-audio-2.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-graphics-2.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-network-2.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-system-2.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-window-2.dll"
+                ]
+              },
+              {
+                "type": "debug", // Third Arg
+                "data": [
+				  "Engine/Libraries/SFML/Win64/bin/openal32.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-audio-2-d.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-graphics-2-d.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-network-2-d.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-system-2-d.dll",
+                  "Engine/Libraries/SFML/Win64/bin/sfml-window-2-d.dll"
+                ]
+              }
+            ]
+          },
+          {
+            "type": "x86", // Second Arg
+            "data": [
+              {
+                "type": "release", // Third Arg
+                "data": [
+				  "Engine/Libraries/SFML/Win32/bin/openal32.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-audio-2.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-graphics-2.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-network-2.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-system-2.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-window-2.dll"
+                ]
+              },
+              {
+                "type": "debug", // Third Arg
+                "data": [
+				  "Engine/Libraries/SFML/Win32/bin/openal32.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-audio-2-d.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-graphics-2-d.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-network-2-d.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-system-2-d.dll",
+                  "Engine/Libraries/SFML/Win32/bin/sfml-window-2-d.dll"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
