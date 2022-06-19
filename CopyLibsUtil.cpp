@@ -11,7 +11,7 @@
 
 #include "json/json.hpp"
 
-// I'm not really a fan of using namespace
+// I'm not really a fan of "using namespace"
 
 using json = nlohmann::json;
 
